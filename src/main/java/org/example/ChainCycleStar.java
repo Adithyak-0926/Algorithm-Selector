@@ -28,7 +28,7 @@ public class ChainCycleStar {
         }
 
         for (int neighbor = 0; neighbor < adjacencyMatrix.length; neighbor++) {
-            if (adjacencyMatrix[currentNode][neighbor] == 1) {
+            if (adjacencyMatrix[currentNode][neighbor] > 0) {
 
 //                if neighbor is not visited then go and do DFS
                 if (!visited[neighbor]) {
@@ -57,23 +57,38 @@ public class ChainCycleStar {
         int cycleNess = 0;
         int cliqueNess = 0;
         int nunmberOfTriangles = 0;
+        int starDegree = 0;
         int n = adjacencyMatrix.length;
         visited = new boolean[n];
         currentPath = new ArrayList<>();
         degreeList = new ArrayList<>();
+        Set<Integer> neighborSetOfaVertex = new HashSet<>();
 
         for (int i = 0; i < n; i++) {
             int degree = 0;
             for(int j = 0; j < n; j++){
-                if (adjacencyMatrix[i][j] == 1){
+                if (adjacencyMatrix[i][j] > 0){
                     degree++;
+                    neighborSetOfaVertex.add(j);
                 }
             }
             degreeList.add(degree);
+            Set<Integer> neighborSetOfaVertex1 = new HashSet<>(neighborSetOfaVertex);
+            Set<Integer> removalSet = new HashSet<>();
+            for(int v : neighborSetOfaVertex){
+                neighborSetOfaVertex1.remove(v);
+                for(int u : neighborSetOfaVertex1){
+                    if (adjacencyMatrix[v][u] > 0){
+                        removalSet.add(u);
+                    }
+                }
+                neighborSetOfaVertex1.add(v);
+            }
+            starDegree = degree - removalSet.size();
 //            (n - (n % 2)) / 2
-            if(degree > 2){
+            if(starDegree > 2){
                 starCount++;
-                totalNodesOfStars = totalNodesOfStars + degree;
+                totalNodesOfStars = totalNodesOfStars + starDegree;
             }
 
             if (!visited[i]) {
