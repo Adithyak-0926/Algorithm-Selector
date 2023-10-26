@@ -53,8 +53,6 @@ public class Cliques {
            X.remove(v);
         }
     }
-
-//    List<Set<Integer>> findMaximalCliques() {
     int getCliqueCount(){
         int totalNodes = 0;
         Set<Integer> R = new HashSet<>();
@@ -91,19 +89,19 @@ public class Cliques {
         result.retainAll(set2);
         return result;
     }
-    int getStarCount(){
-        int starCount = 0;
-        int totalNodes = 0;
-        List<Set<Integer>> RequiredStarsList =  new ArrayList<>();
-        for(int i = 0; i < nodesCount ; i++ ){
-            Set<Integer> temp = adjacencySet(i);
-            if(temp.size() > (nodesCount - (nodesCount % 2)) / 2){
-                RequiredStarsList.add((temp));
-                totalNodes = totalNodes + temp.size();
-            }
-        }
-        starCount = RequiredStarsList.size();
-        return totalNodes/starCount;
-    }
+//    int getStarCount(){
+//        int starCount = 0;
+//        int totalNodes = 0;
+//        List<Set<Integer>> RequiredStarsList =  new ArrayList<>();
+//        for(int i = 0; i < nodesCount ; i++ ){
+//            Set<Integer> temp = adjacencySet(i);
+//            if(temp.size() > (nodesCount - (nodesCount % 2)) / 2){
+//                RequiredStarsList.add((temp));
+//                totalNodes = totalNodes + temp.size();
+//            }
+//        }
+//        starCount = RequiredStarsList.size();
+//        return totalNodes/starCount;
+//    }
 }
 

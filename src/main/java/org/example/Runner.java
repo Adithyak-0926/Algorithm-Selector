@@ -8,7 +8,8 @@ public class Runner {
                 {1, 0, 1, 1, 1},
                 {1, 1, 0, 0, 0},
                 {1, 1, 0, 0, 0},
-                {1, 1, 0, 0, 0}};
+                {1, 1, 0, 0, 0}
+        };
 
         int[][] adjacencyMatrix1 = {
                 {0, 1, 1, 0},
@@ -36,7 +37,28 @@ public class Runner {
                 {1, 0, 0, 0, 0, 1, 1, 0, 0},
                 {1, 0, 0, 0, 0, 0, 0, 0, 0},
         };
-        AlgSelector algSelector = new AlgSelector(adjacencyMatrixDiscussedOne);
+        int[][] snowflakeStarSchema = {
+                {0,1,1,1,1,1,0,0,0,0,0,0,0,0,0},
+                {1,0,0,0,0,0,0,0,1,1,0,0,0,0,0},
+                {1,0,0,0,0,0,0,0,0,0,1,1,0,0,0},
+                {1,0,0,0,0,0,0,0,0,0,0,0,1,1,0},
+                {1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+                {1,0,0,0,0,0,1,1,0,0,0,0,0,0,0},
+                {0,0,0,0,0,1,0,0,0,0,0,0,0,0,0},
+                {0,0,0,0,0,1,0,0,0,0,0,0,0,0,0},
+                {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+                {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0},
+                {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0},
+                {0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
+                {0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
+                {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0},
+        };
+        long startTime = System.currentTimeMillis();
+        AlgSelector algSelector = new AlgSelector(snowflakeStarSchema);
         algSelector.SelectAlgorithm();
+        long timeElapsed = System.currentTimeMillis() - startTime;
+        System.out.println(timeElapsed +"ms");
+
     }
 }

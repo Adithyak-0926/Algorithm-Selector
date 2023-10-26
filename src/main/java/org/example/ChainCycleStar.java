@@ -49,14 +49,14 @@ public class ChainCycleStar {
         currentPathSet.remove(currentNode);
     }
 
-     List<Integer> getChainAndCycleCount(int[][] adjacencyMatrix) {
+     List<Integer> getAllRequiredParams(int[][] adjacencyMatrix) {
         int totalNodes = 0;
         int starCount = 0;
         int totalNodesOfStars = 0;
         int starNess = 0;
+        int cycleNess = 0;
         int cliqueNess = 0;
         int nunmberOfTriangles = 0;
-//        int degMoreThan2 = 0;
         int n = adjacencyMatrix.length;
         visited = new boolean[n];
         currentPath = new ArrayList<>();
@@ -69,11 +69,9 @@ public class ChainCycleStar {
                     degree++;
                 }
             }
-//            if(degree > 2){
-//                degMoreThan2++;
-//            }
             degreeList.add(degree);
-            if(degree > (n - (n % 2)) / 2){
+//            (n - (n % 2)) / 2
+            if(degree > 2){
                 starCount++;
                 totalNodesOfStars = totalNodesOfStars + degree;
             }
@@ -83,14 +81,15 @@ public class ChainCycleStar {
             }
             System.out.print(degreeList.get(i) + " ");
         }
-//        System.out.println(degMoreThan2);
         int chainNess = max_len + pathCount;
         int cycleCount = uniqueCycles.size();
         for (List m : uniqueCycles){
             totalNodes = totalNodes + m.size();
             nunmberOfTriangles++;
         }
-        int cycleNess = totalNodes/cycleCount;
+        if(cycleCount > 0){
+            cycleNess = totalNodes/cycleCount;
+        }
         if(starCount > 0){
             starNess = totalNodesOfStars/starCount;
         }

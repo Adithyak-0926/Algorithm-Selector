@@ -14,15 +14,8 @@ public class AlgSelector {
 
     public void SelectAlgorithm() {
 
-//        Star star = new Star(adjacencyMatrix);
-//        starness = star.getStarCount();
-
-//        Cliques cliques = new Cliques(adjacencyMatrix.length, adjacencyMatrix);
-//        cliqueness = cliques.getCliqueCount();
-//        starness = cliques.getStarCount();
-
         ChainCycleStar chainAndCycle = new ChainCycleStar();
-        List<Integer> requiredVars =  chainAndCycle.getChainAndCycleCount(adjacencyMatrix);
+        List<Integer> requiredVars =  chainAndCycle.getAllRequiredParams(adjacencyMatrix);
         chainness = requiredVars.get(0);
         cycleness = requiredVars.get(1);
         starness = requiredVars.get(2);
