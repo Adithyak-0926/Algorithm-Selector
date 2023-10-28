@@ -12,9 +12,11 @@ public class ChainCycleStar {
 
     // Data structures to track unique cycles
     static Set<List<Integer>> uniqueCycles = new HashSet<>();
+    static Set<Set<Integer>> allowedPaths = new HashSet<>();
     static List<Integer> currentPath;
     static ArrayList<Integer> degreeList;
-    static void DFS(int[][] adjacencyMatrix, int currentNode, int currentLength, int parent, Set<Integer> currentPathSet) {
+
+    static void DFS(int[][] adjacencyMatrix, int currentNode, int currentLength, int parent, Set<Integer> currentPathSet, int totalDegreeWeight,Set<Set<Integer>> allowedPaths) {
         visited[currentNode] = true;
         currentPath.add(currentNode);
         currentPathSet.add(currentNode);
@@ -23,8 +25,8 @@ public class ChainCycleStar {
             max_len = currentLength;
         }
 
-        if (currentLength > (adjacencyMatrix.length) / 2) {
-            pathCount++;
+        if (currentLength > totalDegreeWeight / 2) {
+            allowedPaths.add(Set.copyOf(currentPathSet));
         }
 
         for (int neighbor = 0; neighbor < adjacencyMatrix.length; neighbor++) {
@@ -32,7 +34,7 @@ public class ChainCycleStar {
 
 //                if neighbor is not visited then go and do DFS
                 if (!visited[neighbor]) {
-                    DFS(adjacencyMatrix, neighbor, currentLength + 1, currentNode, currentPathSet);
+                    DFS(adjacencyMatrix, neighbor, currentLength + adjacencyMatrix[currentNode][neighbor], currentNode, currentPathSet, totalDegreeWeight,allowedPaths);
 //                    If the neighbor is visited then 1) check for if it is the parent (because of backtracking)
 //                                          2) check if current path set contains the neighbor indicating cycle
                 } else if (neighbor != parent && currentPathSet.contains(neighbor)) {
@@ -49,67 +51,114 @@ public class ChainCycleStar {
         currentPathSet.remove(currentNode);
     }
 
-     List<Integer> getAllRequiredParams(int[][] adjacencyMatrix) {
-        int totalNodes = 0;
+    List<Integer> getAllRequiredParams(int[][] adjacencyMatrix) {
+        int totalNodesWeightOfCycles = 0;
+        int totalNodesWeightOfStars = 0;
+        int totalNodesWeightOfChains = 0;
         int starCount = 0;
         int totalNodesOfStars = 0;
+        int chainNess = 0;
         int starNess = 0;
         int cycleNess = 0;
         int cliqueNess = 0;
         int nunmberOfTriangles = 0;
+        int totalDegreeWeight = 0;
+        float avgDegreeWeight;
         int starDegree = 0;
+        int starDegreeWeight = 0;
         int n = adjacencyMatrix.length;
         visited = new boolean[n];
         currentPath = new ArrayList<>();
         degreeList = new ArrayList<>();
-        Set<Integer> neighborSetOfaVertex = new HashSet<>();
+        Set<Integer> neighborSetOfaVertex;
+//        to get the total degree of graph
+        for (int k = 0; k < n; k++) {
+            for (int p = 0; p < n; p++) {
+                if (adjacencyMatrix[k][p] > 0) {
+                    totalDegreeWeight = totalDegreeWeight + adjacencyMatrix[k][p];
+                }
+            }
+        }
+        totalDegreeWeight = totalDegreeWeight/2;
+        avgDegreeWeight = totalDegreeWeight / n;
 
         for (int i = 0; i < n; i++) {
             int degree = 0;
-            for(int j = 0; j < n; j++){
-                if (adjacencyMatrix[i][j] > 0){
+            int degreeWeight = 0;
+            neighborSetOfaVertex = new HashSet<>();
+            for (int j = 0; j < n; j++) {
+                if (adjacencyMatrix[i][j] > 0) {
                     degree++;
+                    degreeWeight = degreeWeight + adjacencyMatrix[i][j];
                     neighborSetOfaVertex.add(j);
                 }
             }
             degreeList.add(degree);
-            Set<Integer> neighborSetOfaVertex1 = new HashSet<>(neighborSetOfaVertex);
+//            getting the neighborhood of a vertex and
+//            checking whether there are any edges among them to not consider them for star
             Set<Integer> removalSet = new HashSet<>();
-            for(int v : neighborSetOfaVertex){
-                neighborSetOfaVertex1.remove(v);
-                for(int u : neighborSetOfaVertex1){
-                    if (adjacencyMatrix[v][u] > 0){
+            for (int v : neighborSetOfaVertex) {
+                for (int u : neighborSetOfaVertex) {
+                    if (adjacencyMatrix[v][u] > 0 && v!=u) {
                         removalSet.add(u);
                     }
                 }
-                neighborSetOfaVertex1.add(v);
             }
             starDegree = degree - removalSet.size();
-//            (n - (n % 2)) / 2
-            if(starDegree > 2){
+
+            for (int r : removalSet) {
+                starDegreeWeight = starDegreeWeight + adjacencyMatrix[i][r];
+            }
+            starDegreeWeight = degreeWeight - starDegreeWeight;
+
+            double AvgStarDegreeWeight = 0;
+            if (starDegree > 0) {
+                AvgStarDegreeWeight = starDegreeWeight / starDegree;
+            }
+            if (starDegree > 2 && AvgStarDegreeWeight >= avgDegreeWeight) {
                 starCount++;
-                totalNodesOfStars = totalNodesOfStars + starDegree;
+                totalNodesWeightOfStars = totalNodesWeightOfStars + starDegreeWeight;
             }
 
             if (!visited[i]) {
-                DFS(adjacencyMatrix, i, 0, -1, new HashSet<>());
+                DFS(adjacencyMatrix, i, 0, -1, new HashSet<>(), totalDegreeWeight,allowedPaths);
             }
             System.out.print(degreeList.get(i) + " ");
         }
-        int chainNess = max_len + pathCount;
+
+//        int chainNess = max_len + pathCount;
         int cycleCount = uniqueCycles.size();
-        for (List m : uniqueCycles){
-            totalNodes = totalNodes + m.size();
-            nunmberOfTriangles++;
+
+//      Getting total weight of all cycles and counting number of cycles
+        for (List m : uniqueCycles) {
+            for (int a = 0; a < m.size() - 1; a++) {
+                totalNodesWeightOfCycles = totalNodesWeightOfCycles + adjacencyMatrix[(int) m.get(a)][(int) m.get(a + 1)];
+            }
+            totalNodesWeightOfCycles = totalNodesWeightOfCycles + adjacencyMatrix[(int) m.get(m.size() - 1)][(int) m.get(0)];
+            if (m.size() == 3) {
+                nunmberOfTriangles++;
+            }
         }
-        if(cycleCount > 0){
-            cycleNess = totalNodes/cycleCount;
+        for(Set p : allowedPaths){
+            for(Object m : p){
+                for (Object o : p){
+                    totalNodesWeightOfChains = totalNodesWeightOfChains + adjacencyMatrix[(int) m][(int) o];
+                }
+            }
         }
-        if(starCount > 0){
-            starNess = totalNodesOfStars/starCount;
+        totalNodesWeightOfChains = totalNodesWeightOfChains/2;
+        pathCount = allowedPaths.size();
+        if(pathCount>0){
+            chainNess = totalNodesWeightOfChains/pathCount;
         }
-        if(nunmberOfTriangles > 0){
-            Cliques cliques = new Cliques(n,adjacencyMatrix);
+        if (cycleCount > 0) {
+            cycleNess = totalNodesWeightOfCycles / cycleCount;
+        }
+        if (starCount > 0) {
+            starNess = totalNodesWeightOfStars / starCount;
+        }
+        if (nunmberOfTriangles > 0) {
+            Cliques cliques = new Cliques(n, adjacencyMatrix);
             cliqueNess = cliques.getCliqueCount();
         }
         List<Integer> cycleChainStarCLique = new ArrayList<>();

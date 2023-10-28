@@ -19,8 +19,8 @@ public class Cliques {
             Set<Integer> R, Set<Integer> P, Set<Integer> X, HashSet<Set<Integer>> maximalCliques) {
         if (P.isEmpty() && X.isEmpty()) {
             if (R.size() > 2) {
-            maximalCliques.add(new HashSet<>(R));
-            return;
+                maximalCliques.add(new HashSet<>(R));
+                return;
             }
             return;
         }
@@ -49,12 +49,13 @@ public class Cliques {
 
             Bron_KerboschWithPivot(newR, intersection(P, neighborsV), intersection(X, neighborsV), maximalCliques);
 
-           P.add(v);
-           X.remove(v);
+            P.add(v);
+            X.remove(v);
         }
     }
-    int getCliqueCount(){
-        int totalNodes = 0;
+
+    int getCliqueCount() {
+        int totalNodesWeightsOfCliques = 0;
         Set<Integer> R = new HashSet<>();
         Set<Integer> P = new HashSet<>();
         for (int i = 0; i < nodesCount; i++) {
@@ -65,16 +66,24 @@ public class Cliques {
 
         Bron_KerboschWithPivot(R, P, X, maximalCliques);
 
-        for(Set n : maximalCliques){
-            totalNodes = totalNodes + n.size();
+// Introducing weights here
+        for (Set n : maximalCliques) {
+            System.out.println(n);
+            for (Object a : n) {
+                for (Object b : n) {
+                    totalNodesWeightsOfCliques = totalNodesWeightsOfCliques + adjacencyMatrix[(int) a][(int) b];
+                }
+            }
         }
+        totalNodesWeightsOfCliques = totalNodesWeightsOfCliques/2;
         int totalMaximalCliques = maximalCliques.size();
         System.out.println();
-        if(totalMaximalCliques == 0){
+        if (totalMaximalCliques == 0) {
             return 0;
         }
-        return totalNodes/totalMaximalCliques;
+        return totalNodesWeightsOfCliques / totalMaximalCliques;
     }
+
     Set<Integer> adjacencySet(int vertex) {
         Set<Integer> neighbors = new HashSet<>();
         for (int i = 0; i < nodesCount; i++) {
@@ -84,24 +93,11 @@ public class Cliques {
         }
         return neighbors;
     }
+
     Set<Integer> intersection(Set<Integer> set1, Set<Integer> set2) {
         Set<Integer> result = new HashSet<>(set1);
         result.retainAll(set2);
         return result;
     }
-//    int getStarCount(){
-//        int starCount = 0;
-//        int totalNodes = 0;
-//        List<Set<Integer>> RequiredStarsList =  new ArrayList<>();
-//        for(int i = 0; i < nodesCount ; i++ ){
-//            Set<Integer> temp = adjacencySet(i);
-//            if(temp.size() > (nodesCount - (nodesCount % 2)) / 2){
-//                RequiredStarsList.add((temp));
-//                totalNodes = totalNodes + temp.size();
-//            }
-//        }
-//        starCount = RequiredStarsList.size();
-//        return totalNodes/starCount;
-//    }
 }
 

@@ -32,7 +32,7 @@ public class AlgSelector {
         System.out.println("Score of chain/cycle is " + scoreOfChainCycle);
         System.out.println("Score of star/clique is " + scoreOfStarClique);
 
-        if(scoreOfStarClique > scoreOfChainCycle){
+        if(scoreOfStarClique >= scoreOfChainCycle){
             System.out.println("Select new algorithm A*+hsum");
         }
         else {
