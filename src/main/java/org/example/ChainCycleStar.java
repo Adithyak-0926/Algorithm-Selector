@@ -80,7 +80,8 @@ public class ChainCycleStar {
             }
         }
         totalDegreeWeight = totalDegreeWeight/2;
-        avgDegreeWeight = totalDegreeWeight / n;
+//         a small doubt whether avg degree weight is /n or /n-1
+        avgDegreeWeight = totalDegreeWeight / (n-1);
 
         for (int i = 0; i < n; i++) {
             int degree = 0;
@@ -123,6 +124,8 @@ public class ChainCycleStar {
             if (!visited[i]) {
                 DFS(adjacencyMatrix, i, 0, -1, new HashSet<>(), totalDegreeWeight,allowedPaths);
             }
+//            as starDegreeweight should get reset for every i
+            starDegreeWeight = 0;
             System.out.print(degreeList.get(i) + " ");
         }
 
