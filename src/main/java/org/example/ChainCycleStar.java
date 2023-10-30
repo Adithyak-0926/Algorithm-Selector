@@ -7,10 +7,8 @@ import java.util.Set;
 
 public class ChainCycleStar {
     static int max_len = 0;
-    static int pathCount = 0;
+//    static int pathCount = 0;
     static boolean[] visited;
-
-    // Data structures to track unique cycles
     static Set<List<Integer>> uniqueCycles = new HashSet<>();
     static Set<Set<Integer>> allowedPaths = new HashSet<>();
     static List<Integer> currentPath;
@@ -24,7 +22,7 @@ public class ChainCycleStar {
         if (currentLength > max_len) {
             max_len = currentLength;
         }
-
+// if a path is having weight > totaL weight/2, it is considered to be allowed to count into chainNess
         if (currentLength > totalDegreeWeight / 2) {
             allowedPaths.add(Set.copyOf(currentPathSet));
         }
@@ -56,7 +54,6 @@ public class ChainCycleStar {
         int totalNodesWeightOfStars = 0;
         int totalNodesWeightOfChains = 0;
         int starCount = 0;
-        int totalNodesOfStars = 0;
         int chainNess = 0;
         int starNess = 0;
         int cycleNess = 0;
@@ -64,7 +61,7 @@ public class ChainCycleStar {
         int nunmberOfTriangles = 0;
         int totalDegreeWeight = 0;
         float avgDegreeWeight;
-        int starDegree = 0;
+        int starDegree ;
         int starDegreeWeight = 0;
         int n = adjacencyMatrix.length;
         visited = new boolean[n];
@@ -80,7 +77,7 @@ public class ChainCycleStar {
             }
         }
         totalDegreeWeight = totalDegreeWeight/2;
-//         a small doubt whether avg degree weight is /n or /n-1
+//        avgDegreeWeight is the average weight of whole graph
         avgDegreeWeight = totalDegreeWeight / (n-1);
 
         for (int i = 0; i < n; i++) {
@@ -105,11 +102,13 @@ public class ChainCycleStar {
                     }
                 }
             }
+//            starDegree is the degree we consider for star after removing vertices in neighborhood which are adjacent
             starDegree = degree - removalSet.size();
 
             for (int r : removalSet) {
                 starDegreeWeight = starDegreeWeight + adjacencyMatrix[i][r];
             }
+//            starDegreeWeight is total weight of star after removal set
             starDegreeWeight = degreeWeight - starDegreeWeight;
 
             double AvgStarDegreeWeight = 0;
@@ -124,7 +123,7 @@ public class ChainCycleStar {
             if (!visited[i]) {
                 DFS(adjacencyMatrix, i, 0, -1, new HashSet<>(), totalDegreeWeight,allowedPaths);
             }
-//            as starDegreeweight should get reset for every i
+//            as starDegreeWeight should get reset for every i
             starDegreeWeight = 0;
             System.out.print(degreeList.get(i) + " ");
         }
@@ -132,7 +131,7 @@ public class ChainCycleStar {
 //        int chainNess = max_len + pathCount;
         int cycleCount = uniqueCycles.size();
 
-//      Getting total weight of all cycles and counting number of cycles
+//      Getting total weight of all cycles and counting number of triangles
         for (List m : uniqueCycles) {
             for (int a = 0; a < m.size() - 1; a++) {
                 totalNodesWeightOfCycles = totalNodesWeightOfCycles + adjacencyMatrix[(int) m.get(a)][(int) m.get(a + 1)];
@@ -142,6 +141,7 @@ public class ChainCycleStar {
                 nunmberOfTriangles++;
             }
         }
+//        getting total weight of all allowed chains
         for(Set p : allowedPaths){
             for(Object m : p){
                 for (Object o : p){
@@ -150,7 +150,7 @@ public class ChainCycleStar {
             }
         }
         totalNodesWeightOfChains = totalNodesWeightOfChains/2;
-        pathCount = allowedPaths.size();
+        int pathCount = allowedPaths.size();
         if(pathCount>0){
             chainNess = totalNodesWeightOfChains/pathCount;
         }
