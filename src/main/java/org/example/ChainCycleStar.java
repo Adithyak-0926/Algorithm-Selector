@@ -68,15 +68,13 @@ public class ChainCycleStar {
         currentPath = new ArrayList<>();
         degreeList = new ArrayList<>();
         Set<Integer> neighborSetOfaVertex;
+
 //        to get the total degree of graph
         for (int k = 0; k < n; k++) {
-            for (int p = 0; p < n; p++) {
-                if (adjacencyMatrix[k][p] > 0) {
+            for (int p = k+1; p < n; p++) {
                     totalDegreeWeight = totalDegreeWeight + adjacencyMatrix[k][p];
-                }
             }
         }
-        totalDegreeWeight = totalDegreeWeight/2;
 //        avgDegreeWeight is the average weight of whole graph
         avgDegreeWeight = totalDegreeWeight / (n-1);
 
@@ -132,7 +130,7 @@ public class ChainCycleStar {
         int cycleCount = uniqueCycles.size();
 
 //      Getting total weight of all cycles and counting number of triangles
-        for (List m : uniqueCycles) {
+        for (List<Integer> m : uniqueCycles) {
             for (int a = 0; a < m.size() - 1; a++) {
                 totalNodesWeightOfCycles = totalNodesWeightOfCycles + adjacencyMatrix[(int) m.get(a)][(int) m.get(a + 1)];
             }
@@ -142,14 +140,14 @@ public class ChainCycleStar {
             }
         }
 //        getting total weight of all allowed chains
-        for(Set p : allowedPaths){
-            for(Object m : p){
-                for (Object o : p){
-                    totalNodesWeightOfChains = totalNodesWeightOfChains + adjacencyMatrix[(int) m][(int) o];
+        for(Set<Integer> p : allowedPaths){
+            List<Integer> path = p.stream().toList();
+            for(int m = 0; m < path.size(); m++){
+                for (int z = m; z < path.size(); z++){
+                    totalNodesWeightOfChains = totalNodesWeightOfChains + adjacencyMatrix[path.get(m)][path.get(z)];
                 }
             }
         }
-        totalNodesWeightOfChains = totalNodesWeightOfChains/2;
         int pathCount = allowedPaths.size();
         if(pathCount>0){
             chainNess = totalNodesWeightOfChains/pathCount;
